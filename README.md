@@ -1,10 +1,10 @@
 # The Hamilton-Jacobi Theory of Deep Learning
 
-Code for the paper:
+Jose Marie Antonio Minoza, Erika Fille T. Legara, Christopher P. Monterola
 
-> **The Hamilton-Jacobi Theory of Deep Learning**
-> Jose Marie Antonio Minoza, Erika Fille T. Legara, Christopher P. Monterola
-> [arXiv](https://arxiv.org/abs/2605.28983) | [Project Page](https://jomaminoza.github.io/hamilton-jacobi-theory-of-deep-learning/)
+[arXiv](https://arxiv.org/abs/2605.28983) | [Project Page](https://jomaminoza.github.io/hamilton-jacobi-theory-of-deep-learning/)
+
+Code for the paper *The Hamilton-Jacobi Theory of Deep Learning*.
 
 ## Overview
 
