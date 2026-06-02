@@ -1,0 +1,30 @@
+# generated output
+figures/
+results/
+*.csv
+
+# downloaded datasets
+data/
+mnist_data/
+cifar10_data/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.eggs/
+*.egg-info/
+build/
+dist/
+
+# environments
+.env
+.venv
+venv/
+env/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
