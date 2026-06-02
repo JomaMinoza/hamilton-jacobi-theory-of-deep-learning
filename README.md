@@ -80,10 +80,10 @@ Hessian bound) and the dataset loaders.
 
 ```
 .
-├── utils.py            # shared math and data loading
-├── experiments/        # one script per check / figure
-├── docs/               # project page (GitHub Pages)
-└── requirements.txt
+  utils.py            # shared math and data loading
+  experiments/        # one script per check / figure
+  docs/               # project page (GitHub Pages)
+  requirements.txt
 ```
 
 ## Citation
