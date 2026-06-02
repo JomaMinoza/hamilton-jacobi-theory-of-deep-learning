@@ -7,6 +7,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
+  <!-- MathJax for equation rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   <style>
     :root {
       --blue: #2563eb;
@@ -92,23 +101,22 @@
       text-align: justify;
     }
 
-    /* ---- Stat cards ---- */
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 1.8rem;
+    /* ---- Four perspectives ---- */
+    .four-head {
+      text-align: center; font-size: 0.82rem; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--gray);
+      margin: 2rem 0 1rem;
     }
-    @media (max-width: 640px) { .stat-row { grid-template-columns: 1fr; } }
-    .stat-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.2rem;
-      text-align: center;
+    .four-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.9rem; }
+    @media (max-width: 720px) { .four-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 420px) { .four-grid { grid-template-columns: 1fr; } }
+    .four-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 8px;
+      padding: 1.1rem 0.9rem; text-align: center;
     }
-    .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--blue); }
-    .stat-label { font-size: 0.82rem; color: var(--gray); margin-top: 0.3rem; line-height: 1.5; }
+    .four-card .persp { font-size: 0.98rem; font-weight: 700; color: var(--blue); }
+    .four-card .role { font-size: 0.8rem; color: var(--gray); margin-top: 0.45rem; line-height: 1.55; }
+    .four-card .role em { color: #374151; font-style: italic; }
 
     /* ---- Key ideas ---- */
     .idea-text {
@@ -292,25 +300,30 @@
       <em>&epsilon;</em> unifies all four perspectives (network, tropical algebra, viscous PDE, convex
       optimization) in a commutative diagram closed under Lipschitz conditions. Quantitative
       consequences include the minimax-optimal generalization rate
-      <em>O</em>(<em>n</em><sup>&minus;1/(d+2)</sup>) for fixed <em>t</em>, adversarial robustness
+      \(O(n^{-1/(d+2)})\) for fixed <em>t</em>, adversarial robustness
       controlled by <em>&epsilon;</em>, backpropagation as the co-state equation of the Hamiltonian
       system for residual networks, scaling exponents consistent with data intrinsic dimension via PDE
       quadrature, and a closed-form <em>O</em>(<em>N</em>) influence function whose entropy landscape
       undergoes fold bifurcations as <em>&epsilon;</em> increases.
     </p>
 
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-num">Exact</div>
-        <div class="stat-label">LSE layer = Hopf&ndash;Cole solution of a viscous HJ PDE</div>
+    <div class="four-head">A single <em>&epsilon;</em> unifies four perspectives</div>
+    <div class="four-grid">
+      <div class="four-card">
+        <div class="persp">Neural Network</div>
+        <div class="role"><em>&epsilon;</em> = softmax temperature</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num">Exact</div>
-        <div class="stat-label">Transformer attention = expectation under the Gibbs measure</div>
+      <div class="four-card">
+        <div class="persp">Tropical Algebra</div>
+        <div class="role"><em>&epsilon;</em> = Maslov deformation (<em>&epsilon; &rarr; 0</em>: max-plus)</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num">4 &rarr; 1</div>
-        <div class="stat-label">Perspectives unified by a single <em>&epsilon;</em></div>
+      <div class="four-card">
+        <div class="persp">Viscous PDE</div>
+        <div class="role"><em>&epsilon;</em> = viscosity</div>
+      </div>
+      <div class="four-card">
+        <div class="persp">Convex Optimization</div>
+        <div class="role"><em>&epsilon;</em> = regularization strength</div>
       </div>
     </div>
   </div>
@@ -336,8 +349,8 @@
       semiring homomorphism, the Maslov dequantization.
     </p>
     <p class="idea-text" style="margin-top:1rem;">
-      The object realizing this is a log-sum-exp layer,
-      <strong>f<sub>&epsilon;</sub>(x) = &epsilon; log &sum;<sub>j</sub> exp((W<sub>j</sub>&middot;x + b<sub>j</sub>)/&epsilon;)</strong>.
+      The object realizing this is a log-sum-exp layer:
+      \[ f_\varepsilon(x) \;=\; \varepsilon \log \sum_{j=1}^{N} \exp\!\Big( (W_j \cdot x + b_j)/\varepsilon \Big). \]
       The Hopf&ndash;Cole linearization identifies it exactly as the heat-equation propagator of a
       viscous Hamilton&ndash;Jacobi equation: the weights encode the initial data, the architecture
       encodes the Hamiltonian, and a forward pass evaluates that PDE solution at the query point.
@@ -466,7 +479,7 @@
 
     <div class="interactive-wrap two-col">
       <div class="plot-card">
-        <div class="plot-title">Layer output &mdash; LSE<sub>&epsilon;</sub>(a,&thinsp;0) vs max(a,&thinsp;0)</div>
+        <div class="plot-title">Layer output &mdash; \(\mathrm{LSE}_\varepsilon(a,0)\) vs \(\max(a,0)\)</div>
         <canvas id="c_lse" height="220"></canvas>
         <div class="slider-row">
           <span class="slider-label">&epsilon; = <span id="v_eps">1.00</span></span>
@@ -479,7 +492,7 @@
       </div>
 
       <div class="plot-card">
-        <div class="plot-title">Gradient &mdash; &part;/&part;a LSE<sub>&epsilon;</sub> = &sigma;(a/&epsilon;) (Gibbs weight)</div>
+        <div class="plot-title">Gradient &mdash; \(\partial_a \mathrm{LSE}_\varepsilon = \sigma(a/\varepsilon)\) (Gibbs weight)</div>
         <canvas id="c_grad" height="220"></canvas>
         <div class="slider-row">
           <span class="slider-label" style="color:var(--gray); font-size:0.75rem;">same &epsilon; as left</span>
@@ -509,7 +522,7 @@
   <div class="inner wide">
     <div class="sec-title">Interactive: Particle &harr; Wave Phase Transition</div>
     <p class="results-intro">
-      The attribution weights <strong>&pi;<sub>j</sub>(x;&epsilon;) &prop; exp((W<sub>j</sub>&middot;x + b<sub>j</sub>)/&epsilon;)</strong>
+      The attribution weights \(\pi_j(x;\varepsilon) \propto \exp\!\big((W_j \cdot x + b_j)/\varepsilon\big)\)
       form a closed-form influence function. These weights are a <strong>Gibbs measure</strong> &mdash; a
       probability distribution that hands each neuron a share proportional to exp(score&thinsp;/&thinsp;&epsilon;),
       so higher-scoring neurons get exponentially more weight and <em>&epsilon;</em> sets how peaked the split
@@ -517,12 +530,12 @@
       As <em>&epsilon;</em> sweeps, this measure transitions from a concentrated <strong>particle</strong>
       regime (Hopf&ndash;Lax, <em>&epsilon; &rarr; 0</em>) to a spread-out <strong>wave</strong> regime (heat
       equation, <em>&epsilon; &rarr; &infin;</em>). Drag <em>&epsilon;</em> and watch the weights and their
-      entropy <em>H</em>(&pi;) change. The critical scale is <em>&epsilon;*</em> = <em>N</em><sup>&minus;1/d</sup>.
+      entropy <em>H</em>(&pi;) change. The critical scale is \(\varepsilon^* = N^{-1/d}\).
     </p>
 
     <div class="interactive-wrap two-col">
       <div class="plot-card">
-        <div class="plot-title">Attribution weights &pi;<sub>j</sub> over neurons</div>
+        <div class="plot-title">Attribution weights \(\pi_j\) over neurons</div>
         <canvas id="c_weights" height="230"></canvas>
         <div class="slider-row">
           <span class="slider-label">&epsilon; = <span id="v_eps2">0.50</span></span>
@@ -532,7 +545,7 @@
       </div>
 
       <div class="plot-card">
-        <div class="plot-title">Attribution entropy <em>H</em>(&pi;) vs &epsilon;</div>
+        <div class="plot-title">Attribution entropy \(H(\pi)\) vs \(\varepsilon\)</div>
         <canvas id="c_entropy" height="230"></canvas>
         <div class="slider-row">
           <span class="slider-label" style="color:var(--gray); font-size:0.75rem;">marker tracks slider</span>
@@ -597,7 +610,7 @@
 
     <div class="interactive-wrap two-col">
       <div class="plot-card">
-        <div class="plot-title">Entropy landscape <em>H</em>(x; &epsilon;) &mdash; <span id="bif_count">11</span> critical points</div>
+        <div class="plot-title">Entropy landscape \(H(x;\varepsilon)\) &mdash; <span id="bif_count">11</span> critical points</div>
         <canvas id="c_bif_land" height="230"></canvas>
         <div class="slider-row">
           <span class="slider-label">&epsilon; = <span id="v_bifeps">0.50</span></span>
@@ -610,7 +623,7 @@
       </div>
 
       <div class="plot-card">
-        <div class="plot-title">Bifurcation diagram &mdash; critical <em>H</em>-value vs &epsilon;</div>
+        <div class="plot-title">Bifurcation diagram &mdash; critical \(H\)-value vs \(\varepsilon\)</div>
         <canvas id="c_bif_diag" height="230"></canvas>
         <div class="slider-row">
           <span class="slider-label" style="color:var(--gray); font-size:0.75rem;">vertical line tracks &epsilon;</span>
@@ -642,8 +655,8 @@
         <img src="assets/gen_rate.png" alt="Quadrature convergence rate" />
         <p class="fig-caption">
           <strong>Generalization rate.</strong> &ell;<sup>&infin;</sup> error vs.&nbsp;width <em>N</em> for
-          Lipschitz initial data across <em>d</em> &isin; {1,2,4}; dashed
-          <em>O</em>(<em>N</em><sup>&minus;1/d</sup>) slopes confirm the minimax rate.
+          Lipschitz initial data across \(d \in \{1,2,4\}\); dashed
+          \(O(N^{-1/d})\) slopes confirm the minimax rate.
         </p>
       </div>
       <div class="fig">
@@ -660,15 +673,15 @@
         <img src="assets/hessian_mnist.png" alt="Hessian bound on MNIST" />
         <p class="fig-caption">
           <strong>Certified robustness (MNIST).</strong> Measured spectral norm
-          &Vert;&nabla;<sup>2</sup><sub>x</sub>f&Vert;<sub>2</sub> vs.&nbsp;the theoretical bound
-          &Vert;W&Vert;<sup>2</sup><sub>2,&infin;</sub>/&epsilon;; the bound is never violated.
+          \(\|\nabla^2_x f\|_2\) vs.&nbsp;the theoretical bound
+          \(\|W\|_{2,\infty}^2/\varepsilon\); the bound is never violated.
         </p>
       </div>
       <div class="fig">
         <img src="assets/hessian_cifar10.png" alt="Hessian bound on CIFAR-10" />
         <p class="fig-caption">
           <strong>Certified robustness (CIFAR-10).</strong> Same bound across
-          &epsilon; &isin; {0.1, 0.3, 1.0, 3.0, 10.0}; raising <em>&epsilon;</em> monotonically reduces
+          \(\varepsilon \in \{0.1, 0.3, 1.0, 3.0, 10.0\}\); raising \(\varepsilon\) monotonically reduces
           input sensitivity.
         </p>
       </div>
@@ -684,7 +697,7 @@
     <div class="sec-title">The Correspondence Is Exact</div>
 
     <p class="results-intro">
-      The layer&ndash;PDE identity <em>f<sub>&epsilon;</sub> + u<sub>&epsilon;</sub> = |x|<sup>2</sup>/(4t)</em>
+      The layer&ndash;PDE identity \(f_\varepsilon + u_\varepsilon = |x|^2/(4t)\)
       and the transformer attention = Gibbs-measure identity are <strong>exact algebraic statements</strong>,
       not approximations: they hold to floating-point roundoff across all <em>&epsilon;</em>, <em>d</em>, and
       random trials tested. What remains genuinely informative is <em>which</em> architectures and activations
@@ -699,32 +712,15 @@
         <tr><th>Activation</th><th>Tropical limit (&epsilon;&rarr;0)</th><th>Finite-&epsilon; structure</th><th>Exact HJ identity</th></tr>
       </thead>
       <tbody>
-        <tr><td>LSE</td><td>max<sub>j</sub>(W<sub>j</sub>&middot;x+b<sub>j</sub>)</td><td>Hopf&ndash;Cole solution</td><td class="best">Yes (solution-class)</td></tr>
-        <tr><td>ReLU</td><td>max(x,0)</td><td>2-neuron LSE special case</td><td class="best">Yes (special case)</td></tr>
-        <tr><td>Softplus</td><td>max(x,0)</td><td>log(1+e<sup>x</sup>) = LSE<sub>1</sub>(x,0)</td><td class="best">Yes (N=1 case)</td></tr>
-        <tr><td>Sigmoid</td><td>Heaviside</td><td>&nabla;<sub>x</sub>LSE<sub>1</sub>(x,0)</td><td class="best">Yes (&nabla;-class)</td></tr>
-        <tr><td>tanh</td><td>sign(x)</td><td>&pi;<sub>+</sub> &minus; &pi;<sub>&minus;</sub> (signed Gibbs weight)</td><td class="best">Yes (&nabla;-class)</td></tr>
-        <tr><td>SiLU</td><td>ReLU</td><td>x&middot;&nabla;<sub>x</sub>LSE<sub>1</sub>(x,0)</td><td class="open">Open (one derivative off)</td></tr>
-        <tr><td>GELU</td><td>ReLU</td><td>x&middot;(heat kernel integral)</td><td class="open">Open (product form)</td></tr>
+        <tr><td>LSE</td><td>\(\max_j(W_j \cdot x + b_j)\)</td><td>Hopf&ndash;Cole solution</td><td class="best">Yes (solution-class)</td></tr>
+        <tr><td>ReLU</td><td>\(\max(x,0)\)</td><td>2-neuron LSE special case</td><td class="best">Yes (special case)</td></tr>
+        <tr><td>Softplus</td><td>\(\max(x,0)\)</td><td>\(\log(1+e^x) = \mathrm{LSE}_1(x,0)\)</td><td class="best">Yes (N=1 case)</td></tr>
+        <tr><td>Sigmoid</td><td>Heaviside</td><td>\(\nabla_x \mathrm{LSE}_1(x,0)\)</td><td class="best">Yes (\(\nabla\)-class)</td></tr>
+        <tr><td>tanh</td><td>\(\mathrm{sign}(x)\)</td><td>\(\pi_+ - \pi_-\) (signed Gibbs weight)</td><td class="best">Yes (\(\nabla\)-class)</td></tr>
+        <tr><td>SiLU</td><td>ReLU</td><td>\(x \cdot \nabla_x \mathrm{LSE}_1(x,0)\)</td><td class="open">Open (one derivative off)</td></tr>
+        <tr><td>GELU</td><td>ReLU</td><td>\(x \cdot\) (heat kernel integral)</td><td class="open">Open (product form)</td></tr>
       </tbody>
     </table>
-
-    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
-      Empirical scaling exponent &alpha; and implied intrinsic dimension d<sub>eff</sub> = 1/&alpha;
-    </p>
-    <table class="data-table">
-      <thead><tr><th>Domain</th><th>Source</th><th>&alpha;</th><th>d<sub>eff</sub> = 1/&alpha;</th></tr></thead>
-      <tbody>
-        <tr><td>Language (GPT-scale, under-trained)</td><td>Kaplan et al.</td><td>0.076</td><td>13.2</td></tr>
-        <tr><td>Language (compute-optimal)</td><td>Hoffmann et al. (Chinchilla)</td><td>0.35</td><td>2.9</td></tr>
-        <tr><td>Video (16 frames, 16&times;16 VQ)</td><td>Henighan et al.</td><td>0.24</td><td>4.2</td></tr>
-        <tr><td>Math</td><td>Henighan et al.</td><td>0.38</td><td>2.6</td></tr>
-      </tbody>
-    </table>
-    <p class="fig-caption">
-      The conversion d<sub>eff</sub> = 1/&alpha; is directional and should be read as an order-of-magnitude
-      estimate; variation across domains is consistent with the manifold hypothesis.
-    </p>
   </div>
 </section>
 
