@@ -2,7 +2,9 @@
 
 Jose Marie Antonio Minoza, Erika Fille T. Legara, Christopher P. Monterola
 
-[arXiv](https://arxiv.org/abs/2605.28983) | [Project Page](https://jomaminoza.github.io/hamilton-jacobi-theory-of-deep-learning/)
+[![arXiv](https://img.shields.io/badge/arXiv-2605.28983-b31b1b.svg)](https://arxiv.org/abs/2605.28983)
+[![Project Page](https://img.shields.io/badge/Project-Page-2563eb.svg)](https://jomaminoza.github.io/hamilton-jacobi-theory-of-deep-learning/)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776ab.svg)](https://www.python.org/)
 
 Code for the paper *The Hamilton-Jacobi Theory of Deep Learning*.
 
