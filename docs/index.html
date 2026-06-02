@@ -161,6 +161,23 @@
       color: #1e40af;
       margin-top: 1rem;
     }
+    .callout .plain-gloss { display: block; margin-top: 0.6rem; color: #1e3a8a; }
+
+    /* ---- Plain-terms box ---- */
+    .plain {
+      background: var(--blue-light);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 8px 8px 0;
+      padding: 1.3rem 1.5rem;
+      margin-top: 1.8rem;
+    }
+    .plain h4 {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 0.9rem;
+    }
+    .plain p { font-size: 0.95rem; line-height: 1.8; color: #374151; margin-bottom: 0.9rem; }
+    .plain p:last-child { margin-bottom: 0; }
+    .plain strong { color: var(--text); }
 
     /* ---- Dynamic results (GIFs) ---- */
     .gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
@@ -224,6 +241,7 @@
     <a href="#abstract" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Abstract</a>
     <a href="#interactive" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Explore</a>
     <a href="#results" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Results</a>
+    <a href="https://arxiv.org/abs/2605.28983" target="_blank" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">arXiv</a>
     <a href="https://github.com/JomaMinoza/hamilton-jacobi-theory-of-deep-learning" target="_blank" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Code</a>
   </div>
 </nav>
@@ -239,13 +257,16 @@
     search for its initial data. One deformation parameter <em>&epsilon;</em> unifies network, tropical
     algebra, viscous PDE, and convex optimization in a single commutative diagram.
   </p>
-  <p class="author">Jose Marie Antonio Mi&ntilde;oza</p>
+  <p class="author">Jose Marie Antonio Mi&ntilde;oza &nbsp;&middot;&nbsp; Erika Fille T. Legara &nbsp;&middot;&nbsp; Christopher P. Monterola</p>
   <p class="affil">Center for AI Research PH</p>
   <div class="link-row">
-    <!-- TODO: replace href with the arXiv / OpenReview link once available -->
-    <a class="link-btn" href="#" target="_blank">
+    <a class="link-btn" href="https://arxiv.org/abs/2605.28983" target="_blank">
       <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg>
       Paper
+    </a>
+    <a class="link-btn" href="https://arxiv.org/abs/2605.28983" target="_blank">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+      arXiv
     </a>
     <a class="link-btn" href="https://github.com/JomaMinoza/hamilton-jacobi-theory-of-deep-learning" target="_blank">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22v3.293c0 .319.21.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -281,12 +302,12 @@
 
     <div class="stat-row">
       <div class="stat-card">
-        <div class="stat-num">~10<sup>&minus;16</sup></div>
-        <div class="stat-label">Layer&ndash;PDE identity error (floating-point roundoff)</div>
+        <div class="stat-num">Exact</div>
+        <div class="stat-label">LSE layer = Hopf&ndash;Cole solution of a viscous HJ PDE</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">exactly 0</div>
-        <div class="stat-label">Transformer attention = Gibbs-measure identity error</div>
+        <div class="stat-num">Exact</div>
+        <div class="stat-label">Transformer attention = expectation under the Gibbs measure</div>
       </div>
       <div class="stat-card">
         <div class="stat-num">4 &rarr; 1</div>
@@ -343,6 +364,34 @@
         a Boltzmann factor, and the forward pass computes the log-partition function of the ensemble.
       </p>
     </div>
+
+    <div class="plain">
+      <h4>In Plain Terms</h4>
+      <p>
+        <strong>A trained network is a physics equation in disguise.</strong> Normally you pick an equation
+        and build a network to approximate its solution. This work flips the arrow: once a network is trained,
+        it already <em>is</em> the exact solution of a specific equation &mdash; a Hamilton&ndash;Jacobi
+        equation, the same kind that describes how a wavefront spreads or how a particle finds its
+        least-effort path. Training is the search for <em>which</em> equation (its starting shape) best fits
+        the data; a forward pass just reads off that solution at your input point.
+      </p>
+      <p>
+        <strong>Everything is controlled by one knob, <em>&epsilon;</em>.</strong> Turn it down and the
+        network becomes sharp and decisive &mdash; it picks the single best match. Turn it up and it blends
+        many options smoothly, the way heat diffuses and blurs detail. The surprise is that this one number is
+        simultaneously the softmax &ldquo;temperature,&rdquo; the equation's blurriness (viscosity), and how
+        strongly the model is regularized. They are not three analogies &mdash; they are the same number
+        wearing three hats.
+      </p>
+      <p>
+        <strong>The same trick that links quantum to classical physics.</strong> Sharpening the knob all the
+        way (<em>&epsilon; &rarr; 0</em>) turns a soft, probabilistic computation into a hard, deterministic
+        one &mdash; mathematically the identical move that takes quantum mechanics to classical mechanics as
+        Planck's constant vanishes. So a forward pass is, formally, a sum over &ldquo;paths&rdquo; just like
+        Feynman's path integrals, but with positive weights, which is exactly what keeps it computable on an
+        ordinary computer.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -388,6 +437,9 @@
     <div class="callout" style="margin-top:1.2rem;">
       The same <em>&epsilon;</em> is simultaneously the softmax temperature, the PDE viscosity, and the
       convex-regularization strength. These roles are <em>identified</em>, not merely analogous.
+      <span class="plain-gloss"><strong>In plain terms:</strong> small <em>&epsilon;</em> = a sharp,
+      confident decision; large <em>&epsilon;</em> = a soft, blurred average. The curve on the right is just
+      &ldquo;how much credit each option gets.&rdquo;</span>
     </div>
   </div>
 </section>
@@ -400,11 +452,14 @@
     <div class="sec-title">Interactive: Particle &harr; Wave Phase Transition</div>
     <p class="results-intro">
       The attribution weights <strong>&pi;<sub>j</sub>(x;&epsilon;) &prop; exp((W<sub>j</sub>&middot;x + b<sub>j</sub>)/&epsilon;)</strong>
-      form a closed-form influence function. As <em>&epsilon;</em> sweeps, the Gibbs measure transitions
-      from a concentrated <strong>particle</strong> regime (Hopf&ndash;Lax, <em>&epsilon; &rarr; 0</em>)
-      to a spread-out <strong>wave</strong> regime (heat equation, <em>&epsilon; &rarr; &infin;</em>).
-      Drag <em>&epsilon;</em> and watch the weights and their entropy <em>H</em>(&pi;) change. The
-      critical scale is <em>&epsilon;*</em> = <em>N</em><sup>&minus;1/d</sup>.
+      form a closed-form influence function. These weights are a <strong>Gibbs measure</strong> &mdash; a
+      probability distribution that hands each neuron a share proportional to exp(score&thinsp;/&thinsp;&epsilon;),
+      so higher-scoring neurons get exponentially more weight and <em>&epsilon;</em> sets how peaked the split
+      is (it is exactly the softmax, and the same rule statistical physics uses to weight states by energy).
+      As <em>&epsilon;</em> sweeps, this measure transitions from a concentrated <strong>particle</strong>
+      regime (Hopf&ndash;Lax, <em>&epsilon; &rarr; 0</em>) to a spread-out <strong>wave</strong> regime (heat
+      equation, <em>&epsilon; &rarr; &infin;</em>). Drag <em>&epsilon;</em> and watch the weights and their
+      entropy <em>H</em>(&pi;) change. The critical scale is <em>&epsilon;*</em> = <em>N</em><sup>&minus;1/d</sup>.
     </p>
 
     <div class="interactive-wrap two-col">
@@ -432,6 +487,9 @@
       This is the same particle-to-wave transition shown empirically below on synthetic and MNIST data
       &mdash; the entropy landscape <em>H</em>(&pi;) reorganizes through fold bifurcations as the
       viscosity <em>&epsilon;</em> increases.
+      <span class="plain-gloss"><strong>In plain terms:</strong> at low <em>&epsilon;</em> a prediction is
+      explained by essentially one training example (a &ldquo;particle&rdquo;); at high <em>&epsilon;</em> it
+      is a smeared average over many (a &ldquo;wave&rdquo;). The switch happens at a predictable scale.</span>
     </div>
   </div>
 </section>
@@ -456,15 +514,60 @@
         <div class="cap"><strong>MNIST (3 vs.&nbsp;7).</strong> The decision boundary follows inter-cluster geometry in PCA space; <em>&epsilon;*</em> &asymp; 0.091.</div>
       </div>
     </div>
-    <div class="gif-grid" style="margin-top:1.2rem;">
+    <div style="margin-top:1.2rem;">
       <div class="gif-card">
-        <img src="assets/bifurcation_transition.gif" alt="Fold bifurcations of the attribution-entropy landscape" />
-        <div class="cap"><strong>Bifurcation cascade.</strong> Critical points of the entropy landscape <em>H</em>(&pi;) annihilate in fold bifurcations as <em>&epsilon;</em> increases.</div>
+        <img src="assets/bifurcation_transition.gif" alt="Fold bifurcations of the attribution-entropy landscape" style="height:340px;" />
+        <div class="cap"><strong>Bifurcation cascade.</strong> Critical points of the entropy landscape <em>H</em>(&pi;) annihilate in fold bifurcations as <em>&epsilon;</em> increases &mdash; explore this live in the interactive below.</div>
       </div>
-      <div class="gif-card">
-        <img src="assets/bifurcation_diagram.png" alt="Bifurcation diagram" />
-        <div class="cap"><strong>Bifurcation diagram.</strong> <em>H</em>-value of each critical point vs.&nbsp;<em>&epsilon;</em>; branch annihilations are the fold bifurcations of the attribution theorem.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     INTERACTIVE 3: FOLD BIFURCATIONS
+     ========================================================= -->
+<section class="page-section">
+  <div class="inner wide">
+    <div class="sec-title">Interactive: Fold Bifurcations of the Attribution Landscape</div>
+    <p class="results-intro">
+      Along a 1-D slice through the data, the attribution entropy <em>H</em>(&pi;(x;&epsilon;)) has a basin
+      (local minimum) near each support point and a ridge (local maximum) between neighbours. As the viscosity
+      <em>&epsilon;</em> increases, neighbouring basins merge: a minimum and an adjacent maximum collide and
+      annihilate in a <strong>fold (saddle-node) bifurcation</strong>. Drag <em>&epsilon;</em> to watch critical
+      points disappear; the right panel traces each critical point's entropy value across <em>&epsilon;</em>.
+    </p>
+
+    <div class="interactive-wrap two-col">
+      <div class="plot-card">
+        <div class="plot-title">Entropy landscape <em>H</em>(x; &epsilon;) &mdash; <span id="bif_count">11</span> critical points</div>
+        <canvas id="c_bif_land" height="230"></canvas>
+        <div class="slider-row">
+          <span class="slider-label">&epsilon; = <span id="v_bifeps">0.50</span></span>
+          <input id="sl_bifeps" type="range" min="0.02" max="3.0" step="0.01" value="0.5" />
+        </div>
+        <p class="slider-note">
+          <span style="color:#2563eb;">&#9661;</span> minima (attribution basins) &nbsp;&nbsp;
+          <span style="color:#dc2626;">&#9651;</span> maxima (attribution ridges)
+        </p>
       </div>
+
+      <div class="plot-card">
+        <div class="plot-title">Bifurcation diagram &mdash; critical <em>H</em>-value vs &epsilon;</div>
+        <canvas id="c_bif_diag" height="230"></canvas>
+        <div class="slider-row">
+          <span class="slider-label" style="color:var(--gray); font-size:0.75rem;">vertical line tracks &epsilon;</span>
+        </div>
+        <p class="slider-note">Each branch annihilation is a fold bifurcation, merging one attribution basin.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:1.2rem;">
+      This is the interactive counterpart of the bifurcation cascade animated above: as <em>&epsilon;</em> grows
+      the entropy landscape simplifies, each fold event collapsing a minimum&ndash;maximum pair into a single
+      smoother region.
+      <span class="plain-gloss"><strong>In plain terms:</strong> picture a landscape of valleys and ridges.
+      As you blur it, neighbouring valleys suddenly merge into one &mdash; not gradually, but in a sharp
+      &ldquo;pop.&rdquo; Each pop is the model deciding two groups of examples now tell the same story.</span>
     </div>
   </div>
 </section>
@@ -472,7 +575,7 @@
 <!-- =========================================================
      MAIN FIGURES
      ========================================================= -->
-<section id="results" class="page-section">
+<section id="results" class="page-section alt">
   <div class="inner wide">
     <div class="sec-title">Quantitative Consequences</div>
 
@@ -518,37 +621,17 @@
 <!-- =========================================================
      VERIFICATION TABLES
      ========================================================= -->
-<section class="page-section alt">
+<section class="page-section">
   <div class="inner wide">
-    <div class="sec-title">The Correspondence Is Exact, Numerically</div>
+    <div class="sec-title">The Correspondence Is Exact</div>
 
-    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
-      Layer = PDE identity &mdash; |f<sub>&epsilon;</sub> + u<sub>&epsilon;</sub> &minus; |x|<sup>2</sup>/(4t)| (4-neuron, 1-D)
+    <p class="results-intro">
+      The layer&ndash;PDE identity <em>f<sub>&epsilon;</sub> + u<sub>&epsilon;</sub> = |x|<sup>2</sup>/(4t)</em>
+      and the transformer attention = Gibbs-measure identity are <strong>exact algebraic statements</strong>,
+      not approximations: they hold to floating-point roundoff across all <em>&epsilon;</em>, <em>d</em>, and
+      random trials tested. What remains genuinely informative is <em>which</em> architectures and activations
+      admit such an exact Hamilton&ndash;Jacobi identity, and which do not.
     </p>
-    <table class="data-table" style="margin-bottom:2rem;">
-      <thead><tr><th>&epsilon;</th><th>Max identity error</th></tr></thead>
-      <tbody>
-        <tr><td>1.00</td><td class="best">4.4 &times; 10<sup>&minus;16</sup></td></tr>
-        <tr><td>0.50</td><td class="best">2.2 &times; 10<sup>&minus;16</sup></td></tr>
-        <tr><td>0.20</td><td class="best">4.4 &times; 10<sup>&minus;16</sup></td></tr>
-        <tr><td>0.10</td><td class="best">4.4 &times; 10<sup>&minus;16</sup></td></tr>
-        <tr><td>0.05</td><td class="best">2.2 &times; 10<sup>&minus;16</sup></td></tr>
-      </tbody>
-    </table>
-
-    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
-      Transformer attention = Gibbs-measure identity &mdash; max|A &minus; B| over 500 random trials, &epsilon; = &radic;d
-    </p>
-    <table class="data-table" style="margin-bottom:2rem;">
-      <thead><tr><th>d</th><th>&epsilon; = &radic;d</th><th>max|A &minus; B|</th></tr></thead>
-      <tbody>
-        <tr><td>4</td><td>2.00</td><td class="best">0</td></tr>
-        <tr><td>8</td><td>2.83</td><td class="best">0</td></tr>
-        <tr><td>16</td><td>4.00</td><td class="best">0</td></tr>
-        <tr><td>32</td><td>5.66</td><td class="best">0</td></tr>
-        <tr><td>64</td><td>8.00</td><td class="best">0</td></tr>
-      </tbody>
-    </table>
 
     <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
       HJ correspondence status for common activations
@@ -590,15 +673,17 @@
 <!-- =========================================================
      BIBTEX
      ========================================================= -->
-<section class="page-section">
+<section class="page-section alt">
   <div class="inner">
     <div class="sec-title">Citation</div>
     <div class="bibtex-wrap">
-      <pre class="bibtex-block" id="bibtex">@inproceedings{minoza2026hjdl,
-  title     = {The Hamilton--Jacobi Theory of Deep Learning},
-  author    = {Mi{\~n}oza, Jose Marie Antonio},
-  booktitle = {Advances in Neural Information Processing Systems},
-  year      = {2026},
+      <pre class="bibtex-block" id="bibtex">@article{minoza2026hjdl,
+  title         = {The Hamilton--Jacobi Theory of Deep Learning},
+  author        = {Mi{\~n}oza, Jose Marie Antonio},
+  journal       = {arXiv preprint arXiv:2605.28983},
+  year          = {2026},
+  eprint        = {2605.28983},
+  archivePrefix = {arXiv},
 }</pre>
       <button class="copy-btn" onclick="copyBibtex()">Copy</button>
     </div>
@@ -844,14 +929,146 @@ function drawEntropy() {
   });
 })();
 
+// ---- Interactive 3: fold bifurcations ----------------------------
+// 1-D support points (irregular spacing so basins merge at different eps).
+const BIFY = [-2.6, -1.5, -0.4, 0.7, 1.7, 2.7];
+const BIF_NB = BIFY.length;
+const BIF_HMAX = Math.log(BIF_NB);
+const BIF_LO = -4, BIF_HI = 4;
+let bifEps = 0.5;
+
+// Attribution entropy along the slice: pi_j(x) ~ exp(-(x-y_j)^2 / (2 eps)).
+function bifEntropy(x, eps) {
+  const raw = BIFY.map(y => -((x - y) * (x - y)) / 2 / eps);
+  const m = Math.max(...raw);
+  const ex = raw.map(r => Math.exp(r - m));
+  const Z = ex.reduce((p, c) => p + c, 0);
+  let H = 0;
+  for (const e of ex) { const p = e / Z; if (p > 1e-12) H -= p * Math.log(p); }
+  return H;
+}
+
+function bifCriticals(eps) {
+  const N = 600, crit = [];
+  const xs = [], hs = [];
+  for (let i = 0; i < N; i++) { const x = BIF_LO + (BIF_HI - BIF_LO) * i / (N - 1); xs.push(x); hs.push(bifEntropy(x, eps)); }
+  for (let i = 1; i < N - 1; i++) {
+    if (hs[i] > hs[i-1] && hs[i] > hs[i+1]) crit.push({ x: xs[i], H: hs[i], type: 'max' });
+    else if (hs[i] < hs[i-1] && hs[i] < hs[i+1]) crit.push({ x: xs[i], H: hs[i], type: 'min' });
+  }
+  return crit;
+}
+
+function triDown(ctx, x, y, s) { ctx.beginPath(); ctx.moveTo(x - s, y - s); ctx.lineTo(x + s, y - s); ctx.lineTo(x, y + s); ctx.closePath(); ctx.fill(); }
+function triUp(ctx, x, y, s)   { ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x + s, y + s); ctx.lineTo(x, y - s); ctx.closePath(); ctx.fill(); }
+
+function drawBifLandscape() {
+  const c = CV['c_bif_land']; if (!c) return;
+  const { ctx, W, H } = c;
+  const pad = { t: 18, r: 16, b: 30, l: 40 };
+  const yMax = BIF_HMAX * 1.12;
+  const toX = v => pad.l + (v - BIF_LO) / (BIF_HI - BIF_LO) * (W - pad.l - pad.r);
+  const toY = v => H - pad.b - (v / yMax) * (H - pad.t - pad.b);
+
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1; ctx.fillStyle = '#9ca3af';
+  ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';
+  [0, 0.5, 1, 1.5].filter(v => v <= yMax).forEach(yv => {
+    ctx.beginPath(); ctx.moveTo(pad.l, toY(yv)); ctx.lineTo(W - pad.r, toY(yv)); ctx.stroke();
+    ctx.fillText(yv.toFixed(1), pad.l - 4, toY(yv) + 3);
+  });
+  ctx.textAlign = 'center';
+  [-3,-2,-1,0,1,2,3].forEach(xv => ctx.fillText(xv, toX(xv), H - pad.b + 12));
+
+  // curve
+  const Npts = 400;
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2.5; ctx.beginPath();
+  for (let i = 0; i < Npts; i++) {
+    const x = BIF_LO + (BIF_HI - BIF_LO) * i / (Npts - 1);
+    const cx = toX(x), cy = toY(bifEntropy(x, bifEps));
+    if (i === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+  }
+  ctx.stroke();
+
+  // critical markers
+  const crit = bifCriticals(bifEps);
+  crit.forEach(p => {
+    if (p.type === 'min') { ctx.fillStyle = '#2563eb'; triDown(ctx, toX(p.x), toY(p.H), 5); }
+    else { ctx.fillStyle = '#dc2626'; triUp(ctx, toX(p.x), toY(p.H), 5); }
+  });
+  const cnt = document.getElementById('bif_count');
+  if (cnt) cnt.textContent = crit.length;
+
+  ctx.fillStyle = '#6b7280'; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('slice coordinate x', pad.l + (W - pad.l - pad.r) / 2, H - 4);
+  ctx.save(); ctx.translate(10, pad.t + (H - pad.t - pad.b) / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('H(x; eps)', 0, 0); ctx.restore();
+}
+
+function drawBifDiagram() {
+  const c = CV['c_bif_diag']; if (!c) return;
+  const { ctx, W, H } = c;
+  const pad = { t: 18, r: 16, b: 30, l: 40 };
+  const lo = Math.log(0.02), hi = Math.log(3.0);
+  const yMax = BIF_HMAX * 1.12;
+  const toX = le => pad.l + (le - lo) / (hi - lo) * (W - pad.l - pad.r);
+  const toY = v => H - pad.b - (v / yMax) * (H - pad.t - pad.b);
+
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1; ctx.fillStyle = '#9ca3af';
+  ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';
+  [0, 0.5, 1, 1.5].filter(v => v <= yMax).forEach(yv => {
+    ctx.beginPath(); ctx.moveTo(pad.l, toY(yv)); ctx.lineTo(W - pad.r, toY(yv)); ctx.stroke();
+    ctx.fillText(yv.toFixed(1), pad.l - 4, toY(yv) + 3);
+  });
+  ctx.textAlign = 'center';
+  [0.02, 0.1, 0.5, 3.0].forEach(ev => ctx.fillText(ev, toX(Math.log(ev)), H - pad.b + 12));
+
+  // scatter of critical points across eps
+  const M = 180;
+  for (let i = 0; i < M; i++) {
+    const le = lo + (hi - lo) * i / (M - 1);
+    const crit = bifCriticals(Math.exp(le));
+    crit.forEach(p => {
+      ctx.fillStyle = p.type === 'min' ? 'rgba(37,99,235,0.55)' : 'rgba(220,38,38,0.55)';
+      ctx.beginPath(); ctx.arc(toX(le), toY(p.H), 1.4, 0, 2 * Math.PI); ctx.fill();
+    });
+  }
+
+  // current eps vertical line + highlighted criticals
+  ctx.strokeStyle = '#111827'; ctx.lineWidth = 1.2; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(toX(Math.log(bifEps)), pad.t); ctx.lineTo(toX(Math.log(bifEps)), H - pad.b); ctx.stroke();
+  ctx.setLineDash([]);
+  bifCriticals(bifEps).forEach(p => {
+    ctx.fillStyle = p.type === 'min' ? '#2563eb' : '#dc2626';
+    ctx.beginPath(); ctx.arc(toX(Math.log(bifEps)), toY(p.H), 3.2, 0, 2 * Math.PI); ctx.fill();
+  });
+
+  ctx.fillStyle = '#6b7280'; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('viscosity eps (log scale)', pad.l + (W - pad.l - pad.r) / 2, H - 4);
+  ctx.save(); ctx.translate(10, pad.t + (H - pad.t - pad.b) / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('critical H-value', 0, 0); ctx.restore();
+}
+
+(function(){
+  const sl = document.getElementById('sl_bifeps');
+  if (sl) sl.addEventListener('input', function() {
+    bifEps = parseFloat(this.value);
+    document.getElementById('v_bifeps').textContent = bifEps.toFixed(2);
+    drawBifLandscape(); drawBifDiagram();
+  });
+})();
+
 // ---- Init + resize ----------------------------------------------
 function initAll() {
   initCanvas('c_lse', 220);
   initCanvas('c_grad', 220);
   initCanvas('c_weights', 230);
   initCanvas('c_entropy', 230);
+  initCanvas('c_bif_land', 230);
+  initCanvas('c_bif_diag', 230);
 }
-function drawAll() { redrawDeform(); drawWeights(); drawEntropy(); }
+function drawAll() { redrawDeform(); drawWeights(); drawEntropy(); drawBifLandscape(); drawBifDiagram(); }
 window.addEventListener('load', () => { initAll(); drawAll(); });
 window.addEventListener('resize', () => { initAll(); drawAll(); });
 
