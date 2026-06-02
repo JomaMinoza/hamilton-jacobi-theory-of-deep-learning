@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Hamilton-Jacobi Theory of Deep Learning</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --gray: #6b7280;
+      --border: #e5e7eb;
+      --text: #111827;
+    }
+
+    * { box-sizing: border-box; }
+    body { font-family: "Inter", sans-serif; color: var(--text); background: #fff; }
+
+    /* ---- Layout ---- */
+    .page-section { padding: 3.5rem 1.5rem; }
+    .page-section.alt { background: #f9fafb; }
+    .inner { max-width: 860px; margin: 0 auto; }
+    .inner.wide { max-width: 1040px; }
+
+    /* ---- Header block ---- */
+    #header { padding: 4rem 1.5rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+    #header h1 {
+      font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+      font-weight: 700;
+      line-height: 1.35;
+      max-width: 760px;
+      margin: 0 auto 0.6rem;
+      white-space: nowrap;
+    }
+    .tldr {
+      font-size: 0.98rem;
+      color: var(--gray);
+      max-width: 640px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.6;
+    }
+    @media (max-width: 760px) {
+      #header h1 { white-space: normal; font-size: 1.3rem; }
+    }
+    .venue-tag {
+      display: inline-block;
+      border: 1.5px solid var(--blue);
+      color: var(--blue);
+      border-radius: 4px;
+      padding: 0.15em 0.6em;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .author { font-size: 1.05rem; color: var(--text); margin-bottom: 0.3rem; }
+    .affil { font-size: 0.9rem; color: var(--gray); margin-bottom: 1.5rem; }
+
+    /* ---- Link buttons ---- */
+    .link-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .link-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .link-btn:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+    .link-btn svg { width: 16px; height: 16px; }
+
+    /* ---- Section title ---- */
+    .sec-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--blue);
+    }
+
+    /* ---- Abstract ---- */
+    .abstract-text {
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: #374151;
+      text-align: justify;
+    }
+
+    /* ---- Stat cards ---- */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+    @media (max-width: 640px) { .stat-row { grid-template-columns: 1fr; } }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--blue); }
+    .stat-label { font-size: 0.82rem; color: var(--gray); margin-top: 0.3rem; line-height: 1.5; }
+
+    /* ---- Key ideas ---- */
+    .idea-text {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: #374151;
+      border-left: 3px solid var(--blue);
+      padding-left: 1.2rem;
+    }
+
+    /* ---- Teaser / figures ---- */
+    .teaser img, .fig img {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .fig-caption {
+      font-size: 0.85rem;
+      color: var(--gray);
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Interactive ---- */
+    .interactive-wrap { display: grid; gap: 1.5rem; }
+    .interactive-wrap.two-col { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 640px) { .interactive-wrap.two-col { grid-template-columns: 1fr; } }
+
+    .plot-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem;
+    }
+    .plot-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.8rem; color: #374151; }
+    canvas { display: block; width: 100%; border-radius: 4px; }
+
+    .slider-row { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.9rem; }
+    .slider-label { font-size: 0.82rem; white-space: nowrap; min-width: 96px; color: #374151; }
+    .slider-label span { font-weight: 700; font-family: monospace; }
+    input[type=range] { flex: 1; accent-color: var(--blue); cursor: pointer; }
+    .slider-note { font-size: 0.78rem; color: var(--gray); margin-top: 0.4rem; }
+
+    .callout {
+      background: var(--blue-light);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 6px 6px 0;
+      padding: 0.8rem 1rem;
+      font-size: 0.88rem;
+      color: #1e40af;
+      margin-top: 1rem;
+    }
+
+    /* ---- Dynamic results (GIFs) ---- */
+    .gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    @media (max-width: 720px) { .gif-grid { grid-template-columns: 1fr; } }
+    .gif-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
+    .gif-card img { width: 100%; height: 260px; object-fit: contain; background: #fff; display: block; }
+    .gif-card .cap { font-size: 0.82rem; color: var(--gray); padding: 0.7rem 0.9rem; line-height: 1.55; border-top: 1px solid var(--border); }
+
+    /* ---- Results tables ---- */
+    .results-intro { font-size: 0.95rem; line-height: 1.75; color: #374151; margin-bottom: 1.2rem; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .data-table th {
+      background: #f3f4f6; font-weight: 600; padding: 0.6rem 0.8rem;
+      text-align: left; border: 1px solid var(--border);
+    }
+    .data-table td { padding: 0.55rem 0.8rem; border: 1px solid var(--border); color: #374151; }
+    .data-table tr:nth-child(even) td { background: #f9fafb; }
+    .data-table .best { font-weight: 700; color: #111; }
+    .data-table .delta { color: var(--blue); font-weight: 600; }
+    .data-table .open { color: #9ca3af; font-style: italic; }
+
+    /* ---- BibTeX ---- */
+    .bibtex-wrap { position: relative; }
+    .bibtex-block {
+      background: #1f2937;
+      color: #d1d5db;
+      font-family: "Courier New", monospace;
+      font-size: 0.84rem;
+      line-height: 1.7;
+      padding: 1.2rem 1.4rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .copy-btn {
+      position: absolute; top: 0.6rem; right: 0.7rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #d1d5db; border-radius: 4px;
+      padding: 0.2rem 0.65rem; font-size: 0.75rem; cursor: pointer;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ---- Footer ---- */
+    footer {
+      text-align: center; padding: 2rem;
+      font-size: 0.82rem; color: var(--gray);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+<nav style="position:fixed; top:0; left:0; right:0; z-index:100; background:#fff; border-bottom:1px solid var(--border); height:48px; display:flex; align-items:center; padding:0 1.5rem;">
+  <span style="font-weight:700; font-size:0.95rem; color:var(--text);">Hamilton&ndash;Jacobi Theory of Deep Learning</span>
+  <div style="margin-left:auto; display:flex; gap:0.2rem;">
+    <a href="#abstract" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Abstract</a>
+    <a href="#interactive" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Explore</a>
+    <a href="#results" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Results</a>
+    <a href="https://github.com/JomaMinoza/hamilton-jacobi-theory-of-deep-learning" target="_blank" style="font-size:0.85rem; color:var(--gray); text-decoration:none; padding:0 0.6rem;">Code</a>
+  </div>
+</nav>
+
+<!-- =========================================================
+     TITLE / AUTHOR / LINKS
+     ========================================================= -->
+<section id="header" style="padding-top:5rem;">
+  <span class="venue-tag">NeurIPS 2026</span>
+  <h1>The Hamilton&ndash;Jacobi Theory of Deep Learning</h1>
+  <p class="tldr">
+    A trained neural network <em>is</em>, exactly, a Hamilton&ndash;Jacobi PDE &mdash; and training is a
+    search for its initial data. One deformation parameter <em>&epsilon;</em> unifies network, tropical
+    algebra, viscous PDE, and convex optimization in a single commutative diagram.
+  </p>
+  <p class="author">Jose Marie Antonio Mi&ntilde;oza</p>
+  <p class="affil">Center for AI Research PH</p>
+  <div class="link-row">
+    <!-- TODO: replace href with the arXiv / OpenReview link once available -->
+    <a class="link-btn" href="#" target="_blank">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg>
+      Paper
+    </a>
+    <a class="link-btn" href="https://github.com/JomaMinoza/hamilton-jacobi-theory-of-deep-learning" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22v3.293c0 .319.21.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      Code
+    </a>
+  </div>
+</section>
+
+<!-- =========================================================
+     ABSTRACT + STAT CARDS
+     ========================================================= -->
+<section id="abstract" class="page-section alt">
+  <div class="inner">
+    <div class="sec-title">Abstract</div>
+    <p class="abstract-text">
+      Training a neural network is identified, exactly, as a search through Hamilton&ndash;Jacobi
+      initial-value problems: each gradient step selects the initial data of a viscous
+      Hamilton&ndash;Jacobi equation whose Hopf&ndash;Cole propagator best fits the observations; at
+      inference, the input is the spatial point at which that solution is evaluated and the initial
+      condition is already encoded in the weights. The correspondence is exact for log-sum-exp layers
+      and structural for broader architectures: residual networks, transformers, and recurrent
+      architectures (RNNs, LSTMs, SSMs) each discretize the same class of Hamilton&ndash;Jacobi
+      equations, with architecture-dependent Hamiltonian and viscosity. A single deformation parameter
+      <em>&epsilon;</em> unifies all four perspectives (network, tropical algebra, viscous PDE, convex
+      optimization) in a commutative diagram closed under Lipschitz conditions. Quantitative
+      consequences include the minimax-optimal generalization rate
+      <em>O</em>(<em>n</em><sup>&minus;1/(d+2)</sup>) for fixed <em>t</em>, adversarial robustness
+      controlled by <em>&epsilon;</em>, backpropagation as the co-state equation of the Hamiltonian
+      system for residual networks, scaling exponents consistent with data intrinsic dimension via PDE
+      quadrature, and a closed-form <em>O</em>(<em>N</em>) influence function whose entropy landscape
+      undergoes fold bifurcations as <em>&epsilon;</em> increases.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">~10<sup>&minus;16</sup></div>
+        <div class="stat-label">Layer&ndash;PDE identity error (floating-point roundoff)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">exactly 0</div>
+        <div class="stat-label">Transformer attention = Gibbs-measure identity error</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4 &rarr; 1</div>
+        <div class="stat-label">Perspectives unified by a single <em>&epsilon;</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     KEY IDEAS
+     ========================================================= -->
+<section class="page-section">
+  <div class="inner">
+    <div class="sec-title">The Central Idea</div>
+    <p class="idea-text">
+      Conventionally the question runs one way: given a PDE, design a network to approximate its
+      solution. Here a trained network already <em>is</em> a Hamilton&ndash;Jacobi equation, and the
+      question is which one.
+    </p>
+    <p class="idea-text" style="margin-top:1rem;">
+      The key is a single deformation parameter <em>&epsilon;</em> and <strong>ultradiscretization</strong>
+      &mdash; the exact passage <em>&epsilon; &rarr; 0</em> between two algebraic worlds. At
+      <em>&epsilon; = 0</em>, addition is max and multiplication is + (the tropical semiring); at
+      <em>&epsilon; &gt; 0</em>, ordinary arithmetic is restored and the same objects reappear as the
+      solution operator of a viscous PDE. The passage is not an approximation &mdash; it is an exact
+      semiring homomorphism, the Maslov dequantization.
+    </p>
+    <p class="idea-text" style="margin-top:1rem;">
+      The object realizing this is a log-sum-exp layer,
+      <strong>f<sub>&epsilon;</sub>(x) = &epsilon; log &sum;<sub>j</sub> exp((W<sub>j</sub>&middot;x + b<sub>j</sub>)/&epsilon;)</strong>.
+      The Hopf&ndash;Cole linearization identifies it exactly as the heat-equation propagator of a
+      viscous Hamilton&ndash;Jacobi equation: the weights encode the initial data, the architecture
+      encodes the Hamiltonian, and a forward pass evaluates that PDE solution at the query point.
+    </p>
+
+    <div style="margin-top:1.8rem;">
+      <div class="plot-title" style="margin-bottom:0.6rem;">One parameter <em>&epsilon;</em>, four identities</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Neural network</th><th>Physics</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>LSE layer at <em>&epsilon; &gt; 0</em></td><td>Quantum statistical mechanics (partition function)</td></tr>
+          <tr><td>Tropical limit <em>&epsilon; &rarr; 0</em></td><td>Classical mechanics (principle of least action)</td></tr>
+          <tr><td><em>&epsilon;</em></td><td><em>&#8463;</em> (Planck's constant)</td></tr>
+          <tr><td>Softmax weights <em>&pi;<sub>j</sub></em></td><td>Boltzmann&ndash;Gibbs probabilities</td></tr>
+          <tr><td>Network forward pass</td><td>Imaginary-time Schr&ouml;dinger propagator</td></tr>
+          <tr><td>Neurons <em>j</em> = 1,&hellip;,<em>N</em></td><td>Discrete paths in a path integral</td></tr>
+        </tbody>
+      </table>
+      <p class="fig-caption">
+        The Feynman&ndash;Kac formula is the unifying object: each neuron is a discrete path weighted by
+        a Boltzmann factor, and the forward pass computes the log-partition function of the ensemble.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     INTERACTIVE 1: DEFORMATION PARAMETER
+     ========================================================= -->
+<section id="interactive" class="page-section alt">
+  <div class="inner wide">
+    <div class="sec-title">Interactive: The Deformation Parameter <em>&epsilon;</em></div>
+    <p class="results-intro">
+      The log-sum-exp layer is a smooth deformation of the tropical max. Drag <em>&epsilon;</em> to see
+      <strong>LSE<sub>&epsilon;</sub>(a,&thinsp;0)</strong> relax toward <strong>max(a,&thinsp;0)</strong>
+      (left) and its gradient become the Gibbs / softmax weight
+      <strong>&sigma;(a/&epsilon;)</strong> (right). As <em>&epsilon; &rarr; 0</em> the smooth layer
+      hardens into the Hopf&ndash;Lax lookup; as <em>&epsilon;</em> grows it becomes the viscous heat
+      propagator.
+    </p>
+
+    <div class="interactive-wrap two-col">
+      <div class="plot-card">
+        <div class="plot-title">Layer output &mdash; LSE<sub>&epsilon;</sub>(a,&thinsp;0) vs max(a,&thinsp;0)</div>
+        <canvas id="c_lse" height="220"></canvas>
+        <div class="slider-row">
+          <span class="slider-label">&epsilon; = <span id="v_eps">1.00</span></span>
+          <input id="sl_eps" type="range" min="0.05" max="5.0" step="0.05" value="1.0" />
+        </div>
+        <p class="slider-note">
+          <span style="color:#2563eb;">&#9646;</span> LSE (viscous, &epsilon;&gt;0) &nbsp;&nbsp;
+          <span style="color:#dc2626;">&#9135;&#9135;</span> Hopf&ndash;Lax max (&epsilon;&rarr;0)
+        </p>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-title">Gradient &mdash; &part;/&part;a LSE<sub>&epsilon;</sub> = &sigma;(a/&epsilon;) (Gibbs weight)</div>
+        <canvas id="c_grad" height="220"></canvas>
+        <div class="slider-row">
+          <span class="slider-label" style="color:var(--gray); font-size:0.75rem;">same &epsilon; as left</span>
+        </div>
+        <p class="slider-note">The gradient is exactly the softmax / Boltzmann&ndash;Gibbs weight &mdash; a genuine probability for all &epsilon;&nbsp;&gt;&nbsp;0.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:1.2rem;">
+      The same <em>&epsilon;</em> is simultaneously the softmax temperature, the PDE viscosity, and the
+      convex-regularization strength. These roles are <em>identified</em>, not merely analogous.
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     INTERACTIVE 2: PARTICLE-WAVE TRANSITION
+     ========================================================= -->
+<section class="page-section">
+  <div class="inner wide">
+    <div class="sec-title">Interactive: Particle &harr; Wave Phase Transition</div>
+    <p class="results-intro">
+      The attribution weights <strong>&pi;<sub>j</sub>(x;&epsilon;) &prop; exp((W<sub>j</sub>&middot;x + b<sub>j</sub>)/&epsilon;)</strong>
+      form a closed-form influence function. As <em>&epsilon;</em> sweeps, the Gibbs measure transitions
+      from a concentrated <strong>particle</strong> regime (Hopf&ndash;Lax, <em>&epsilon; &rarr; 0</em>)
+      to a spread-out <strong>wave</strong> regime (heat equation, <em>&epsilon; &rarr; &infin;</em>).
+      Drag <em>&epsilon;</em> and watch the weights and their entropy <em>H</em>(&pi;) change. The
+      critical scale is <em>&epsilon;*</em> = <em>N</em><sup>&minus;1/d</sup>.
+    </p>
+
+    <div class="interactive-wrap two-col">
+      <div class="plot-card">
+        <div class="plot-title">Attribution weights &pi;<sub>j</sub> over neurons</div>
+        <canvas id="c_weights" height="230"></canvas>
+        <div class="slider-row">
+          <span class="slider-label">&epsilon; = <span id="v_eps2">0.50</span></span>
+          <input id="sl_eps2" type="range" min="0.03" max="5.0" step="0.01" value="0.5" />
+        </div>
+        <p class="slider-note">Low &epsilon; &rarr; one neuron dominates (particle). High &epsilon; &rarr; uniform spread (wave).</p>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-title">Attribution entropy <em>H</em>(&pi;) vs &epsilon;</div>
+        <canvas id="c_entropy" height="230"></canvas>
+        <div class="slider-row">
+          <span class="slider-label" style="color:var(--gray); font-size:0.75rem;">marker tracks slider</span>
+        </div>
+        <p class="slider-note">Entropy rises monotonically with &epsilon;; fold bifurcations merge attribution basins along the way.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:1.2rem;">
+      This is the same particle-to-wave transition shown empirically below on synthetic and MNIST data
+      &mdash; the entropy landscape <em>H</em>(&pi;) reorganizes through fold bifurcations as the
+      viscosity <em>&epsilon;</em> increases.
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     DYNAMIC RESULTS (GIFs)
+     ========================================================= -->
+<section class="page-section alt">
+  <div class="inner wide">
+    <div class="sec-title">Dynamic Results: The Phase Transition in Action</div>
+    <p class="results-intro">
+      Animations of the LSE network as a Hopf&ndash;Cole solution as the viscosity <em>&epsilon;</em>
+      sweeps across the critical scale <em>&epsilon;*</em> = <em>N</em><sup>&minus;1/d</sup>.
+    </p>
+    <div class="gif-grid">
+      <div class="gif-card">
+        <img src="assets/phase_transition.gif" alt="Particle-to-wave phase transition on synthetic data" />
+        <div class="cap"><strong>Synthetic (two-cluster).</strong> Attribution basins sharpen in the particle regime and flatten to uniform entropy in the wave regime.</div>
+      </div>
+      <div class="gif-card">
+        <img src="assets/mnist_phase_transition.gif" alt="Phase transition on MNIST 3 vs 7" />
+        <div class="cap"><strong>MNIST (3 vs.&nbsp;7).</strong> The decision boundary follows inter-cluster geometry in PCA space; <em>&epsilon;*</em> &asymp; 0.091.</div>
+      </div>
+    </div>
+    <div class="gif-grid" style="margin-top:1.2rem;">
+      <div class="gif-card">
+        <img src="assets/bifurcation_transition.gif" alt="Fold bifurcations of the attribution-entropy landscape" />
+        <div class="cap"><strong>Bifurcation cascade.</strong> Critical points of the entropy landscape <em>H</em>(&pi;) annihilate in fold bifurcations as <em>&epsilon;</em> increases.</div>
+      </div>
+      <div class="gif-card">
+        <img src="assets/bifurcation_diagram.png" alt="Bifurcation diagram" />
+        <div class="cap"><strong>Bifurcation diagram.</strong> <em>H</em>-value of each critical point vs.&nbsp;<em>&epsilon;</em>; branch annihilations are the fold bifurcations of the attribution theorem.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MAIN FIGURES
+     ========================================================= -->
+<section id="results" class="page-section">
+  <div class="inner wide">
+    <div class="sec-title">Quantitative Consequences</div>
+
+    <div class="interactive-wrap two-col">
+      <div class="fig">
+        <img src="assets/gen_rate.png" alt="Quadrature convergence rate" />
+        <p class="fig-caption">
+          <strong>Generalization rate.</strong> &ell;<sup>&infin;</sup> error vs.&nbsp;width <em>N</em> for
+          Lipschitz initial data across <em>d</em> &isin; {1,2,4}; dashed
+          <em>O</em>(<em>N</em><sup>&minus;1/d</sup>) slopes confirm the minimax rate.
+        </p>
+      </div>
+      <div class="fig">
+        <img src="assets/scaling_law.png" alt="Scaling law" />
+        <p class="fig-caption">
+          <strong>Scaling law.</strong> Test RMSE vs.&nbsp;width for Adam-trained LSE networks; the empirical
+          exponent recovers the data intrinsic dimension via PDE quadrature.
+        </p>
+      </div>
+    </div>
+
+    <div class="interactive-wrap two-col" style="margin-top:1.4rem;">
+      <div class="fig">
+        <img src="assets/hessian_mnist.png" alt="Hessian bound on MNIST" />
+        <p class="fig-caption">
+          <strong>Certified robustness (MNIST).</strong> Measured spectral norm
+          &Vert;&nabla;<sup>2</sup><sub>x</sub>f&Vert;<sub>2</sub> vs.&nbsp;the theoretical bound
+          &Vert;W&Vert;<sup>2</sup><sub>2,&infin;</sub>/&epsilon;; the bound is never violated.
+        </p>
+      </div>
+      <div class="fig">
+        <img src="assets/hessian_cifar10.png" alt="Hessian bound on CIFAR-10" />
+        <p class="fig-caption">
+          <strong>Certified robustness (CIFAR-10).</strong> Same bound across
+          &epsilon; &isin; {0.1, 0.3, 1.0, 3.0, 10.0}; raising <em>&epsilon;</em> monotonically reduces
+          input sensitivity.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     VERIFICATION TABLES
+     ========================================================= -->
+<section class="page-section alt">
+  <div class="inner wide">
+    <div class="sec-title">The Correspondence Is Exact, Numerically</div>
+
+    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
+      Layer = PDE identity &mdash; |f<sub>&epsilon;</sub> + u<sub>&epsilon;</sub> &minus; |x|<sup>2</sup>/(4t)| (4-neuron, 1-D)
+    </p>
+    <table class="data-table" style="margin-bottom:2rem;">
+      <thead><tr><th>&epsilon;</th><th>Max identity error</th></tr></thead>
+      <tbody>
+        <tr><td>1.00</td><td class="best">4.4 &times; 10<sup>&minus;16</sup></td></tr>
+        <tr><td>0.50</td><td class="best">2.2 &times; 10<sup>&minus;16</sup></td></tr>
+        <tr><td>0.20</td><td class="best">4.4 &times; 10<sup>&minus;16</sup></td></tr>
+        <tr><td>0.10</td><td class="best">4.4 &times; 10<sup>&minus;16</sup></td></tr>
+        <tr><td>0.05</td><td class="best">2.2 &times; 10<sup>&minus;16</sup></td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
+      Transformer attention = Gibbs-measure identity &mdash; max|A &minus; B| over 500 random trials, &epsilon; = &radic;d
+    </p>
+    <table class="data-table" style="margin-bottom:2rem;">
+      <thead><tr><th>d</th><th>&epsilon; = &radic;d</th><th>max|A &minus; B|</th></tr></thead>
+      <tbody>
+        <tr><td>4</td><td>2.00</td><td class="best">0</td></tr>
+        <tr><td>8</td><td>2.83</td><td class="best">0</td></tr>
+        <tr><td>16</td><td>4.00</td><td class="best">0</td></tr>
+        <tr><td>32</td><td>5.66</td><td class="best">0</td></tr>
+        <tr><td>64</td><td>8.00</td><td class="best">0</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
+      HJ correspondence status for common activations
+    </p>
+    <table class="data-table" style="margin-bottom:2rem;">
+      <thead>
+        <tr><th>Activation</th><th>Tropical limit (&epsilon;&rarr;0)</th><th>Finite-&epsilon; structure</th><th>Exact HJ identity</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>LSE</td><td>max<sub>j</sub>(W<sub>j</sub>&middot;x+b<sub>j</sub>)</td><td>Hopf&ndash;Cole solution</td><td class="best">Yes (solution-class)</td></tr>
+        <tr><td>ReLU</td><td>max(x,0)</td><td>2-neuron LSE special case</td><td class="best">Yes (special case)</td></tr>
+        <tr><td>Softplus</td><td>max(x,0)</td><td>log(1+e<sup>x</sup>) = LSE<sub>1</sub>(x,0)</td><td class="best">Yes (N=1 case)</td></tr>
+        <tr><td>Sigmoid</td><td>Heaviside</td><td>&nabla;<sub>x</sub>LSE<sub>1</sub>(x,0)</td><td class="best">Yes (&nabla;-class)</td></tr>
+        <tr><td>tanh</td><td>sign(x)</td><td>&pi;<sub>+</sub> &minus; &pi;<sub>&minus;</sub> (signed Gibbs weight)</td><td class="best">Yes (&nabla;-class)</td></tr>
+        <tr><td>SiLU</td><td>ReLU</td><td>x&middot;&nabla;<sub>x</sub>LSE<sub>1</sub>(x,0)</td><td class="open">Open (one derivative off)</td></tr>
+        <tr><td>GELU</td><td>ReLU</td><td>x&middot;(heat kernel integral)</td><td class="open">Open (product form)</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:0.88rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">
+      Empirical scaling exponent &alpha; and implied intrinsic dimension d<sub>eff</sub> = 1/&alpha;
+    </p>
+    <table class="data-table">
+      <thead><tr><th>Domain</th><th>Source</th><th>&alpha;</th><th>d<sub>eff</sub> = 1/&alpha;</th></tr></thead>
+      <tbody>
+        <tr><td>Language (GPT-scale, under-trained)</td><td>Kaplan et al.</td><td>0.076</td><td>13.2</td></tr>
+        <tr><td>Language (compute-optimal)</td><td>Hoffmann et al. (Chinchilla)</td><td>0.35</td><td>2.9</td></tr>
+        <tr><td>Video (16 frames, 16&times;16 VQ)</td><td>Henighan et al.</td><td>0.24</td><td>4.2</td></tr>
+        <tr><td>Math</td><td>Henighan et al.</td><td>0.38</td><td>2.6</td></tr>
+      </tbody>
+    </table>
+    <p class="fig-caption">
+      The conversion d<sub>eff</sub> = 1/&alpha; is directional and should be read as an order-of-magnitude
+      estimate; variation across domains is consistent with the manifold hypothesis.
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================
+     BIBTEX
+     ========================================================= -->
+<section class="page-section">
+  <div class="inner">
+    <div class="sec-title">Citation</div>
+    <div class="bibtex-wrap">
+      <pre class="bibtex-block" id="bibtex">@inproceedings{minoza2026hjdl,
+  title     = {The Hamilton--Jacobi Theory of Deep Learning},
+  author    = {Mi{\~n}oza, Jose Marie Antonio},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026},
+}</pre>
+      <button class="copy-btn" onclick="copyBibtex()">Copy</button>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer>
+  <p>
+    Website template based on <a href="https://nerfies.github.io" target="_blank">Nerfies</a>
+    (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>).
+    &copy; 2026 Jose Marie Antonio Mi&ntilde;oza, Center for AI Research PH.
+  </p>
+</footer>
+
+<!-- =========================================================
+     INTERACTIVE JAVASCRIPT
+     ========================================================= -->
+<script>
+// ---- Shared math -------------------------------------------------
+const sigmoid = x => 1 / (1 + Math.exp(-x));
+const lse2 = (a, b, eps) => {
+  const m = Math.max(a, b);
+  return m + eps * Math.log(Math.exp((a - m) / eps) + Math.exp((b - m) / eps));
+};
+
+// ---- Canvas state ------------------------------------------------
+const CV = {};
+function initCanvas(id, logicalH) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const dpr = window.devicePixelRatio || 1;
+  const logicalW = Math.max((el.parentElement ? el.parentElement.clientWidth - 24 : 0), 280);
+  el.width  = Math.round(logicalW * dpr);
+  el.height = Math.round(logicalH * dpr);
+  el.style.height = logicalH + 'px';
+  const ctx = el.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  CV[id] = { ctx, W: logicalW, H: logicalH };
+}
+
+// ---- Generic line chart ------------------------------------------
+function drawChart(ctx, W, H, xRange, yRange, series, opts) {
+  const pad = opts.pad || { t:18, r:20, b:28, l:38 };
+  const N = 400;
+  const toX = v => pad.l + (v - xRange[0]) / (xRange[1] - xRange[0]) * (W - pad.l - pad.r);
+  const toY = v => H - pad.b - (v - yRange[0]) / (yRange[1] - yRange[0]) * (H - pad.t - pad.b);
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1;
+  if (opts.yTicks) opts.yTicks.forEach(y => {
+    ctx.beginPath(); ctx.moveTo(pad.l, toY(y)); ctx.lineTo(W - pad.r, toY(y)); ctx.stroke();
+  });
+
+  ctx.strokeStyle = '#d1d5db'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, toY(yRange[0])); ctx.lineTo(W - pad.r, toY(yRange[0])); ctx.stroke();
+  const x0 = (xRange[0] <= 0 && xRange[1] >= 0) ? 0 : xRange[0];
+  ctx.beginPath(); ctx.moveTo(toX(x0), pad.t); ctx.lineTo(toX(x0), H - pad.b); ctx.stroke();
+
+  ctx.fillStyle = '#9ca3af'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'center';
+  if (opts.xTicks) opts.xTicks.forEach(x => ctx.fillText(x, toX(x), H - pad.b + 12));
+  ctx.textAlign = 'right';
+  if (opts.yTicks) opts.yTicks.forEach(y => ctx.fillText(y, pad.l - 4, toY(y) + 3));
+
+  if (opts.xlabel) {
+    ctx.textAlign = 'center'; ctx.fillStyle = '#6b7280'; ctx.font = '11px Inter, sans-serif';
+    ctx.fillText(opts.xlabel, (pad.l + W - pad.r) / 2, H - 4);
+  }
+  if (opts.ylabel) {
+    ctx.save(); ctx.translate(10, (pad.t + H - pad.b) / 2);
+    ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center';
+    ctx.fillText(opts.ylabel, 0, 0); ctx.restore();
+  }
+
+  series.forEach(s => {
+    const xs = Array.from({length: N}, (_, i) => xRange[0] + (xRange[1] - xRange[0]) * i / (N - 1));
+    const ys = xs.map(s.fn);
+    ctx.save();
+    ctx.strokeStyle = s.color; ctx.lineWidth = s.width || 2.2;
+    ctx.setLineDash(s.dash || []);
+    ctx.beginPath();
+    xs.forEach((x, i) => { const cx = toX(x), cy = toY(ys[i]); if (i === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy); });
+    ctx.stroke();
+    ctx.restore();
+    if (s.label) {
+      const lx = pad.l + 8, ly = pad.t + (series.indexOf(s)) * 16 + 12;
+      ctx.save();
+      ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.setLineDash(s.dash || []);
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + 18, ly); ctx.stroke();
+      ctx.fillStyle = '#374151'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(s.label, lx + 22, ly + 3);
+      ctx.restore();
+    }
+  });
+  if (opts.marker) {
+    ctx.save();
+    ctx.fillStyle = opts.marker.color || '#dc2626';
+    const mx = toX(opts.marker.x), my = toY(opts.marker.y);
+    ctx.beginPath(); ctx.arc(mx, my, 4, 0, 2 * Math.PI); ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ---- Interactive 1: deformation parameter ------------------------
+let eps = 1.0;
+function redrawDeform() {
+  const padS = {t:18, r:16, b:30, l:40};
+  const a = CV['c_lse'];
+  if (a) drawChart(a.ctx, a.W, a.H, [-4, 4], [-0.2, 4.2], [
+    { fn: v => Math.max(v, 0),     color: '#dc2626', dash: [5,4], width: 1.5, label: 'max(a,0)' },
+    { fn: v => lse2(v, 0, eps),    color: '#2563eb', width: 2.5,  label: 'LSE_eps(a,0)' },
+  ], { xTicks: [-3,-2,-1,0,1,2,3], yTicks: [0,1,2,3,4], xlabel: 'net input a', ylabel: 'output', pad: padS });
+
+  const b = CV['c_grad'];
+  if (b) drawChart(b.ctx, b.W, b.H, [-4, 4], [-0.05, 1.1], [
+    { fn: v => v < 0 ? 0 : 1,       color: '#d1d5db', dash: [5,4], width: 1.5, label: 'step (eps->0)' },
+    { fn: v => sigmoid(v / eps),     color: '#059669', width: 2.5, label: 'sigma(a/eps)' },
+  ], { xTicks: [-3,-2,-1,0,1,2,3], yTicks: [0,0.25,0.5,0.75,1], xlabel: 'a', ylabel: 'weight', pad: padS });
+}
+(function(){
+  const sl = document.getElementById('sl_eps');
+  if (sl) sl.addEventListener('input', function() {
+    eps = parseFloat(this.value);
+    document.getElementById('v_eps').textContent = eps.toFixed(2);
+    redrawDeform();
+  });
+})();
+
+// ---- Interactive 2: particle-wave attribution --------------------
+// Fixed neuron scores (smooth two-bump profile, deterministic).
+const SCORES = [0.2, 0.6, 1.1, 1.7, 2.2, 2.0, 1.3, 0.9, 1.4, 1.8, 1.1, 0.5];
+const NEU = SCORES.length;
+let eps2 = 0.5;
+
+function softmax(scores, e) {
+  const m = Math.max(...scores);
+  const ex = scores.map(s => Math.exp((s - m) / e));
+  const Z = ex.reduce((p, c) => p + c, 0);
+  return ex.map(v => v / Z);
+}
+function entropy(p) { return -p.reduce((s, v) => s + (v > 1e-12 ? v * Math.log(v) : 0), 0); }
+
+function drawWeights() {
+  const c = CV['c_weights']; if (!c) return;
+  const { ctx, W, H } = c;
+  const pad = { t: 16, r: 14, b: 30, l: 40 };
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  const pi = softmax(SCORES, eps2);
+  const maxP = Math.max(...pi, 0.15);
+  const plotW = W - pad.l - pad.r, plotH = H - pad.t - pad.b;
+  const bw = plotW / NEU * 0.7, gap = plotW / NEU;
+
+  // y grid + ticks
+  ctx.strokeStyle = '#f0f0f0'; ctx.fillStyle = '#9ca3af';
+  ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';
+  for (let k = 0; k <= 4; k++) {
+    const yv = maxP * k / 4;
+    const y = pad.t + plotH - (yv / maxP) * plotH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+    ctx.fillText(yv.toFixed(2), pad.l - 4, y + 3);
+  }
+  // bars
+  for (let j = 0; j < NEU; j++) {
+    const x = pad.l + j * gap + (gap - bw) / 2;
+    const h = (pi[j] / maxP) * plotH;
+    ctx.fillStyle = '#2563eb';
+    ctx.fillRect(x, pad.t + plotH - h, bw, h);
+  }
+  // axis labels
+  ctx.fillStyle = '#6b7280'; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('neuron index j', pad.l + plotW / 2, H - 4);
+  ctx.save(); ctx.translate(10, pad.t + plotH / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('pi_j', 0, 0); ctx.restore();
+}
+
+// entropy curve vs eps (log-x)
+function drawEntropy() {
+  const c = CV['c_entropy']; if (!c) return;
+  const { ctx, W, H } = c;
+  const padE = { t: 18, r: 16, b: 30, l: 40 };
+  const lo = Math.log(0.03), hi = Math.log(5.0);
+  const Hmax = Math.log(NEU);
+  const toX = le => padE.l + (le - lo) / (hi - lo) * (W - padE.l - padE.r);
+  const toY = hv => H - padE.b - (hv / (Hmax * 1.05)) * (H - padE.t - padE.b);
+
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  // grid
+  ctx.strokeStyle = '#f0f0f0'; ctx.fillStyle = '#9ca3af';
+  ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';
+  [0, 0.5, 1, 1.5, 2, 2.5].filter(v => v <= Hmax * 1.05).forEach(hv => {
+    ctx.beginPath(); ctx.moveTo(padE.l, toY(hv)); ctx.lineTo(W - padE.r, toY(hv)); ctx.stroke();
+    ctx.fillText(hv.toFixed(1), padE.l - 4, toY(hv) + 3);
+  });
+  // x ticks (eps values)
+  ctx.textAlign = 'center';
+  [0.05, 0.2, 1.0, 5.0].forEach(ev => ctx.fillText(ev, toX(Math.log(ev)), H - padE.b + 12));
+  // Hmax line
+  ctx.strokeStyle = '#d1d5db'; ctx.setLineDash([5,4]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(padE.l, toY(Hmax)); ctx.lineTo(W - padE.r, toY(Hmax)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#9ca3af'; ctx.textAlign = 'left';
+  ctx.fillText('log N (max entropy)', padE.l + 6, toY(Hmax) - 4);
+
+  // curve
+  const Npts = 200;
+  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 2.5; ctx.beginPath();
+  for (let i = 0; i < Npts; i++) {
+    const le = lo + (hi - lo) * i / (Npts - 1);
+    const hv = entropy(softmax(SCORES, Math.exp(le)));
+    const cx = toX(le), cy = toY(hv);
+    if (i === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+  }
+  ctx.stroke();
+
+  // eps* = N^{-1/d}, use d=2 for the 2-D demo
+  const epsStar = Math.pow(NEU, -1 / 2);
+  ctx.strokeStyle = '#f9a825'; ctx.setLineDash([4,3]); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(toX(Math.log(epsStar)), padE.t); ctx.lineTo(toX(Math.log(epsStar)), H - padE.b); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#b45309'; ctx.textAlign = 'center'; ctx.font = '10px Inter, sans-serif';
+  ctx.fillText('eps*', toX(Math.log(epsStar)), padE.t + 10);
+
+  // current marker
+  const curH = entropy(softmax(SCORES, eps2));
+  ctx.fillStyle = '#dc2626';
+  ctx.beginPath(); ctx.arc(toX(Math.log(eps2)), toY(curH), 4.5, 0, 2 * Math.PI); ctx.fill();
+
+  // axis labels
+  ctx.fillStyle = '#6b7280'; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('viscosity eps (log scale)', padE.l + (W - padE.l - padE.r) / 2, H - 4);
+}
+
+(function(){
+  const sl = document.getElementById('sl_eps2');
+  if (sl) sl.addEventListener('input', function() {
+    eps2 = parseFloat(this.value);
+    document.getElementById('v_eps2').textContent = eps2.toFixed(2);
+    drawWeights(); drawEntropy();
+  });
+})();
+
+// ---- Init + resize ----------------------------------------------
+function initAll() {
+  initCanvas('c_lse', 220);
+  initCanvas('c_grad', 220);
+  initCanvas('c_weights', 230);
+  initCanvas('c_entropy', 230);
+}
+function drawAll() { redrawDeform(); drawWeights(); drawEntropy(); }
+window.addEventListener('load', () => { initAll(); drawAll(); });
+window.addEventListener('resize', () => { initAll(); drawAll(); });
+
+// ---- BibTeX copy ------------------------------------------------
+function copyBibtex() {
+  const text = document.getElementById('bibtex').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
