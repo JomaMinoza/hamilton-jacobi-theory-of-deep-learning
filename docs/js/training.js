@@ -420,18 +420,32 @@ function drawRobustBound() {
   // ||W||^2/eps is exact only for L = 1; for L > 1 only the measured value is shown.
   const pad = { t: 14, r: 14, b: 30, l: 46 }, le0 = Math.log(0.03), le1 = Math.log(3.0), NEv = 44;
   const xg = []; for (let i = 0; i <= 80; i++) xg.push(-3.6 + 7.2 * i / 80);
-  const hh = 0.03, saved = trEps;
-  const eps = [], meas = [];
+  const hh = 0.03, saved = trEps, din = trDinOut;
+  const eps = [], meas = [], bnd = [];
   for (let j = 0; j < NEv; j++) {
     const e = Math.exp(le0 + (le1 - le0) * j / (NEv - 1)); trEps = e;
-    let mx = 0; for (const x of xg) { const fxx = (trFx(x + hh) - 2 * trFx(x) + trFx(x - hh)) / (hh * hh); mx = Math.max(mx, Math.abs(fxx)); }
-    eps.push(e); meas.push(mx);
+    let mx = 0, mb = 0;
+    for (const x of xg) {
+      const fp = trForward(x + hh), f0 = trForward(x), fm = trForward(x - hh);
+      const fxx = (fp.f - 2 * f0.f + fm.f) / (hh * hh); if (Math.abs(fxx) > mx) mx = Math.abs(fxx);
+      // exact LSE Hessian identity f'' = E_pi[z''] + Var_pi[z']/eps with z_j = W_j . h(x);
+      // bound E_pi[z''] by max_j |z_j''| and Var_pi[z'] by (spread of z_j')^2 / 4. Holds at any depth.
+      let zppMax = 0, zpMax = -1e30, zpMin = 1e30;
+      for (let q = 0; q < TR_NL; q++) {
+        let zp = 0, zpp = 0;
+        for (let k = 0; k < din; k++) { const w = outW[q * din + k]; zp += w * (fp.aLast[k] - fm.aLast[k]) / (2 * hh); zpp += w * (fp.aLast[k] - 2 * f0.aLast[k] + fm.aLast[k]) / (hh * hh); }
+        if (Math.abs(zpp) > zppMax) zppMax = Math.abs(zpp);
+        if (zp > zpMax) zpMax = zp; if (zp < zpMin) zpMin = zp;
+      }
+      const sp = zpMax - zpMin, B = zppMax + sp * sp / (4 * e); if (B > mb) mb = B;
+    }
+    eps.push(e); meas.push(mx); bnd.push(mb);
   }
   trEps = saved;
-  let bnd = null;
-  if (trL === 1) { let maxW2 = 0; for (let j = 0; j < TR_NL; j++) maxW2 = Math.max(maxW2, outW[j] * outW[j]); bnd = eps.map(e => maxW2 / e); }
+  // single layer: use the paper's exact ||W||^2 / eps theorem (din = 1, so h(x) = x)
+  if (trL === 1) { let maxW2 = 0; for (let q = 0; q < TR_NL; q++) maxW2 = Math.max(maxW2, outW[q] * outW[q]); for (let j = 0; j < NEv; j++) bnd[j] = maxW2 / eps[j]; }
   let lymin = 1e9, lymax = -1e9;
-  for (let j = 0; j < NEv; j++) { const lm = Math.log10(Math.max(meas[j], 1e-6)); lymin = Math.min(lymin, lm); lymax = Math.max(lymax, lm); if (bnd) { lymin = Math.min(lymin, Math.log10(bnd[j])); lymax = Math.max(lymax, Math.log10(bnd[j])); } }
+  for (let j = 0; j < NEv; j++) { const lm = Math.log10(Math.max(meas[j], 1e-6)), lb = Math.log10(Math.max(bnd[j], 1e-6)); lymin = Math.min(lymin, lm, lb); lymax = Math.max(lymax, lm, lb); }
   lymin = Math.floor(lymin); lymax = Math.ceil(lymax); if (lymax <= lymin) lymax = lymin + 1;
   const toX = le => pad.l + (le - le0) / (le1 - le0) * (W - pad.l - pad.r);
   const toY = ly => H - pad.b - (ly - lymin) / (lymax - lymin) * (H - pad.t - pad.b);
@@ -439,17 +453,16 @@ function drawRobustBound() {
   ctx.strokeStyle = '#f0f0f0'; ctx.fillStyle = '#9ca3af'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';
   for (let k = lymin; k <= lymax; k++) { const y = toY(k); ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke(); ctx.fillText('1e' + k, pad.l - 4, y + 3); }
   ctx.textAlign = 'center'; [0.05, 0.2, 1.0, 3.0].forEach(ev => ctx.fillText(ev, toX(Math.log(ev)), H - pad.b + 12));
-  if (bnd) {
-    ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.8; ctx.setLineDash([5, 4]); ctx.beginPath();
-    for (let j = 0; j < NEv; j++) { const cx = toX(Math.log(eps[j])), cy = toY(Math.log10(bnd[j])); if (j === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy); }
-    ctx.stroke(); ctx.setLineDash([]);
-  }
+  ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.8; ctx.setLineDash([5, 4]); ctx.beginPath();
+  for (let j = 0; j < NEv; j++) { const cx = toX(Math.log(eps[j])), cy = toY(Math.log10(Math.max(bnd[j], 1e-6))); if (j === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy); }
+  ctx.stroke(); ctx.setLineDash([]);
   ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2.2; ctx.beginPath();
   for (let j = 0; j < NEv; j++) { const cx = toX(Math.log(eps[j])), cy = toY(Math.log10(Math.max(meas[j], 1e-6))); if (j === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy); }
   ctx.stroke();
   ctx.strokeStyle = '#111827'; ctx.lineWidth = 1.1; ctx.setLineDash([4, 3]);
   ctx.beginPath(); ctx.moveTo(toX(Math.log(trEps)), pad.t); ctx.lineTo(toX(Math.log(trEps)), H - pad.b); ctx.stroke(); ctx.setLineDash([]);
-  if (trL > 1) { ctx.fillStyle = '#9ca3af'; ctx.font = '9px Inter, sans-serif'; ctx.textAlign = 'right'; ctx.fillText('measured only (||W||^2/eps bound is L=1)', W - pad.r, pad.t + 2); }
+  ctx.fillStyle = '#9ca3af'; ctx.font = '9px Inter, sans-serif'; ctx.textAlign = 'right';
+  ctx.fillText(trL === 1 ? 'bound: ||W||^2 / eps (single-layer theorem)' : 'bound: LSE Hessian identity (any depth)', W - pad.r, pad.t + 2);
   ctx.fillStyle = '#6b7280'; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
   ctx.fillText('viscosity eps (log)', pad.l + (W - pad.l - pad.r) / 2, H - 2);
 }
