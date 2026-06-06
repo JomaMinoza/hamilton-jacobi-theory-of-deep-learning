@@ -480,8 +480,9 @@
       <canvas id="c_robust" height="230"></canvas>
       <p class="slider-note">
         <span style="color:#2563eb;">&#9646;</span> measured \(|f''(x)|\) (max over x), any depth &nbsp;&nbsp;
-        <span style="color:#dc2626;">&#9135;&#9135;</span> bound (shown for L = 1, never violated); vertical line =
-        current \(\varepsilon\). The \(\|W\|^2/\varepsilon\) bound is a single-layer theorem.
+        <span style="color:#dc2626;">&#9135;&#9135;</span> certified upper bound (never violated); vertical line =
+        current \(\varepsilon\). At one layer this is the paper's \(\|W\|^2/\varepsilon\) theorem; deeper, it is the
+        exact LSE Hessian identity \(f'' = \mathbb{E}_\pi[z''] + \mathrm{Var}_\pi[z']/\varepsilon\) bounded over the features.
       </p>
       </div>
     </div>
@@ -958,8 +959,9 @@
         <img src="assets/gen_rate.png" alt="Quadrature convergence rate" />
         <p class="fig-caption">
           <strong>Generalization rate.</strong> &ell;<sup>&infin;</sup> error vs.&nbsp;width <em>N</em> for
-          Lipschitz initial data across \(d \in \{1,2,4\}\); dashed
-          \(O(N^{-1/d})\) slopes confirm the minimax rate.
+          Lipschitz initial data across \(d \in \{1,2,4\}\); dashed \(O(N^{-1/d})\) slopes confirm the minimax
+          <em>approximation</em> rate in width (with \(N^\ast \asymp (n/M^2)^{d/(d+2)}\) this gives the
+          statistical rate \(O(n^{-1/(d+2)})\)).
         </p>
       </div>
       <div class="fig">
