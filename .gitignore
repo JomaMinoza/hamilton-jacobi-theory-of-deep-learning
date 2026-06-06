@@ -3,10 +3,11 @@ figures/
 results/
 *.csv
 
-# downloaded datasets
-data/
+# downloaded datasets (root only; keep docs/data for the project page)
+/data/
 mnist_data/
 cifar10_data/
+!docs/data/
 
 # python
 __pycache__/
